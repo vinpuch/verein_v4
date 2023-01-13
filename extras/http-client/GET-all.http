@@ -1,0 +1,7 @@
+// https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html
+// https://www.jetbrains.com/help/idea/http-response-handling-examples.html#checking-response-headers-body
+
+### Suche alle vereine (<Strg><Click> fuer Web Browser)
+GET {{baseUrl}}
+Accept: application/hal+json
+Authorization: Basic {{userAdmin}} {{password}}

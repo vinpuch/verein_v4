@@ -1,0 +1,83 @@
+' Copyright (C) 2019 - present Juergen Zimmermann, Hochschule Karlsruhe
+'
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+'
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+'
+' You should have received a copy of the GNU General Public License
+' along with this program.  If not, see <https://www.gnu.org/licenses/>.
+@startuml KundeWriteController
+
+skinparam classAttributeIconSize 0
+
+package org.springframework {
+    package web.bind.annotation {
+        interface "@PathVariable" as PathVariable
+
+        interface "@RequestBody" as RequestBody
+    }
+
+    package http {
+        class ResponseEntity<T>
+        class ProblemDetail
+
+    }
+}
+
+package jakarta.servlet.http {
+    interface HttpServletRequest
+}
+
+package java.util {
+    interface List<T>
+    class UUID
+}
+
+package com.acme.verein {
+    package service {
+        class KundeWriteService << control >> << @Service >>
+    }
+
+    package rest #DDDDDD {
+        package patch {
+            class PatchOperation <<entity>>
+        }
+
+        class KundeDTO <<entity>>
+
+        class KundeWriteController << boundary >> << @RestController >> << @RequestMapping >> {
+            + @PostMapping suspend create(@RequestBody KundeDTO: KundeDTO, request: HttpServletRequest): ResponseEntity<ProblemDetail>
+            + @PutMapping suspend update(@PathVariable id: UUID, @RequestBody KundeDTO: KundeDTO): ResponseEntity<ProblemDetail>
+            + @PatchMapping suspend patch(@PathVariable id: UUID, @RequestBody patchOps: List<PatchOperation>): ResponseEntity<ProblemDetail>
+            + @DeleteMapping suspend deleteById(@PathVariable id: UUID): ResponseEntity<Void>
+        }
+
+        KundeWriteController o-down-> "1" KundeWriteService : service
+        KundeWriteController ..> KundeDTO
+        KundeWriteController ..> ProblemDetail
+        KundeWriteController ..> PatchOperation
+
+        KundeWriteController .up.> ResponseEntity
+        KundeWriteController .up.> HttpServletRequest
+
+        KundeWriteController .up.> PathVariable
+        KundeWriteController .up.> RequestBody
+
+        KundeWriteController .up.> UUID
+        KundeWriteController .up.> List
+
+        PatchOperation .[hidden].> KundeWriteService
+    }
+}
+
+hide empty members
+
+footer (c) Juergen Zimmermann
+
+@enduml

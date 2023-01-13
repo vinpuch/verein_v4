@@ -1,0 +1,72 @@
+### Suche mit vorhandener Verein-ID als admin
+GRAPHQL {{baseUrl}}/graphql
+
+query {
+  verein(id: "00000000-0000-0000-0000-000000000001") {
+    name
+  }
+}
+
+### Suche mit nicht-vorhandener Verein-ID als admin
+GRAPHQL {{baseUrl}}/graphql
+
+query {
+  verein(id: "ffffffff-ffff-ffff-ffff-ffffffffffff") {
+    name
+  }
+}
+
+### Suche mit vorhandener Verein-ID als admin
+GRAPHQL {{baseUrl}}/graphql
+
+query {
+  verein(id: "00000000-0000-0000-0000-000000000001") {
+    name
+    erscheinungsdatum
+    homepage
+    umsatz {
+      betrag
+      waehrung
+    }
+  }
+}
+
+### Suche alle Vereine als admin
+GRAPHQL {{baseUrl}}/graphql
+
+query {
+  vereine(input: {}) {
+    id
+    name
+    erscheinungsdatum
+    homepage
+    umsatz {
+      betrag
+      waehrung
+    }
+  }
+}
+
+### Suche Vereine mit dem Namen als admin
+GRAPHQL {{baseUrl}}/graphql
+
+query {
+  vereine(input: {name: "a"}) {
+    id
+    name
+    erscheinungsdatum
+    homepage
+    umsatz {
+      betrag
+      waehrung
+    }
+  }
+}
+### Suche Vereine mit nicht-vorhandenem Namen als admin
+GRAPHQL {{baseUrl}}/graphql
+
+query {
+  vereine(input: {name: "Nichtvorhanden"}) {
+    id
+  }
+}

@@ -1,0 +1,47 @@
+' Copyright (C) 2019 - present Juergen Zimmermann, Hochschule Karlsruhe
+'
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+'
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+'
+' You should have received a copy of the GNU General Public License
+' along with this program.  If not, see <https://www.gnu.org/licenses/>.
+@startuml VereinWriteService
+
+skinparam classAttributeIconSize 0
+
+package com.acme.verein {
+    package java.util {
+        class UUID
+    }
+    package entity {
+        class Verein << entity >>
+    }
+
+    package repository {
+        class KundeRepository << control >> << @Repository >>
+    }
+
+    package service #DDDDDD {
+        class KundeWriteService << control >> << @Service >> {
+            + suspend create(verein: Verein): Verein
+            + suspend update(verein: Verein, id: UUID)
+        }
+
+        KundeWriteService o--> "1" KundeRepository : repo
+        KundeWriteService ..> Verein
+        KundeWriteService ..> UUID
+    }
+}
+
+hide empty members
+
+footer (c) Jürgen Zimmermann
+
+@enduml

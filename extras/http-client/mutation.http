@@ -1,0 +1,37 @@
+### Ein neues Verein anlegen
+GRAPHQL {{baseUrl}}/graphql
+
+mutation {
+  create(
+    input: {
+      name: "Graphql"
+      erscheinungsdatum: "2022-02-01"
+      homepage: "https://graphql.de"
+      umsatz: {
+        betrag: "200"
+        waehrung: "EUR"
+      }
+    }
+  ) {
+    id
+  }
+}
+
+### Ein neues Verein mit fehlerhaften Daten anlegen
+GRAPHQL {{baseUrl}}/graphql
+
+mutation {
+  create(
+    input: {
+      name: "?!:"
+      erscheinungsdatum: "2022-02-01"
+      homepage: "https://graphql.de"
+      umsatz: {
+        betrag: "1"
+        waehrung: "EUR"
+      }
+    }
+  ) {
+    id
+  }
+}

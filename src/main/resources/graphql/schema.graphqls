@@ -1,0 +1,69 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+"Suche nach Vereindaten"
+type Query {
+  "Suche Vereindaten anhand der ID"
+  verein(id: ID!): Verein
+  "Suche Vereindaten anhand des Namens"
+  vereine(input: Suchkriterien): [Verein!]
+}
+
+type Mutation {
+  "Einen neuen Vereindatensatz anlegen"
+  create(input: VereinInput!): CreatePayload
+}
+
+"Eigenschaften eines Verein-Datensatzes mit untergeordneten Eigenschaften"
+type Verein {
+  "ID des Vereinss"
+  id: ID
+  "Name des Vereinss"
+  name: String!
+  " https://www.graphql-scalars.dev/docs/scalars/local-date"
+  erscheinungsdatum: String
+  homepage: String
+  umsatz: Umsatz
+}
+
+type Umsatz {
+  "Der Betrag"
+  betrag: String!
+  "Die Währung"
+  waehrung: String!
+}
+
+"Suchkriterien für die Query 'vereine'"
+input Suchkriterien {
+  "Name der gesuchten Vereine"
+  name: String
+}
+
+"Eingabedaten für einen neues Verein"
+input VereinInput {
+  "Name des neuen Vereinss"
+  name: String!
+  "Erscheinungsdatum des neuen Vereinss"
+  erscheinungsdatum: String
+  homepage: String
+  "Umsatzangabe zum neuen Verein"
+  umsatz: UmsatzInput
+}
+
+"Umsatzeingabe für ein Verein: Neuanlegen oder Ändern"
+input UmsatzInput {
+  "Betrag"
+  betrag: String!
+  "Währung"
+  waehrung: String!
+}
+
+"Rückgabetyp beim Neuanlegen eines Vereinss"
+type CreatePayload {
+  "ID des neu angelegten Vereinss"
+  id: String!
+}

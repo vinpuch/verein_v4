@@ -1,0 +1,17 @@
+// https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html
+// https://www.jetbrains.com/help/idea/http-response-handling-examples.html#checking-response-headers-body
+
+### Suche mit vorhandenem Namen
+GET {{baseUrl}}/?name=Alpha
+Accept: application/hal+json
+Authorization: Basic {{userAdmin}} {{password}}
+
+### Suche mit nicht-vorhandenem Namen
+GET {{baseUrl}}?name=Nichtvorhanden
+Accept: application/hal+json
+Authorization: Basic {{userAdmin}} {{password}}
+
+### Suche Namen mit Praefix
+GET {{baseUrl}}/name/A
+Accept: application/hal+json
+Authorization: Basic {{userAdmin}} {{password}}

@@ -1,0 +1,22 @@
+### Ein Verein mittels PUT aktualisieren: 204
+PUT {{baseUrl}}/00000000-0000-0000-0000-000000000030
+Content-Type: application/json
+Authorization: Basic {{userAdmin}} {{password}}
+
+< data/verein-30-put.json
+
+
+### Ein nicht-vorhandenen Verein mittels PUT aktualisieren: 404 (Not Found)
+PUT {{baseUrl}}/ffffffff-ffff-ffff-ffff-ffffffffffff
+Content-Type: application/json
+Authorization: Basic {{userAdmin}} {{password}}
+
+< data/verein-30-put.json
+
+
+### Ein Verein mittels PUT und ungueltigen Daten aktualisieren: 422 (Unprocessable Entity)
+PUT {{baseUrl}}/00000000-0000-0000-0000-000000000030
+Content-Type: application/json
+Authorization: Basic {{userAdmin}} {{password}}
+
+< data/verein-30-put-invalid.json

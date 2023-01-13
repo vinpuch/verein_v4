@@ -1,0 +1,9 @@
+{
+    "name": "Namerest",
+    "erscheinungsdatum": "2022-02-01",
+    "umsatz": {
+        "betrag": 200,
+        "waehrung": "EUR"
+    },
+    "homepage": "https://www.rest.de"
+}

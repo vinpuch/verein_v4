@@ -1,0 +1,22 @@
+{
+    "name": "Test",
+    "email": "Theo@Test.de",
+    "kategorie" : 1,
+    "hasNewsletter": true,
+    "erscheinungsdatum": "123",
+    "umsatz": {
+        "betrag": 0,
+        "waehrung": "Xy"
+    },
+    "homepage": "123!",
+    "geschlecht": "W",
+    "familienstand": "L",
+    "interessen": [
+        "R",
+        "L"
+    ],
+    "adresse": {
+        "plz": 12345,
+        "ort": "Testort"
+    }
+}

@@ -1,0 +1,26 @@
+### Ein neues Verein anlegen: 201
+POST {{baseUrl}}
+Content-Type: application/json
+
+< data/verein-neu.json
+
+
+### Ein neues Verein mit ungueltigen Daten anlegen: 422 (Unprocessable Entity)
+POST {{baseUrl}}
+Content-Type: application/json
+
+< data/verein-neu-invalid.json
+
+
+### Ein neues Verein mit fehlerhaften Datentypen anlegen: 400 (Bad Request)
+POST {{baseUrl}}
+Content-Type: application/json
+
+< data/verein-neu-invalid-types.json
+
+
+### Syntaktisch falscher JSON-Datensatz: 400 (Bad Request) mit DecodingException
+POST {{baseUrl}}
+Content-Type: application/json
+
+< data/invalid-json.txt

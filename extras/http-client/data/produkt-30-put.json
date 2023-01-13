@@ -1,0 +1,9 @@
+{
+    "name": "Alphaput",
+    "erscheinungsdatum": "2022-01-03",
+    "umsatz": {
+        "betrag": 30,
+        "waehrung": "EUR"
+    },
+    "homepage": "https://www.acme.de.put"
+}
