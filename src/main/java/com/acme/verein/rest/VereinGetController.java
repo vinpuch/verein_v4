@@ -32,20 +32,16 @@ import org.springframework.hateoas.LinkRelation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.acme.verein.rest.VereinGetController.REST_PATH;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_MODIFIED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.ResponseEntity.ok;
-import static org.springframework.http.ResponseEntity.status;
+import static org.springframework.http.ResponseEntity.*;
 
 /**
  * Eine @RestController-Klasse bildet die REST-Schnittstelle, wobei die HTTP-Methoden, Pfade und MIME-Typen auf die
@@ -142,21 +138,37 @@ public class VereinGetController {
      * Suche mit diversen Suchkriterien als Query-Parameter.
      *
      * @param suchkriterien Query-Parameter als Map.
-     * @param request Das Request-Objekt, um Links für HATEOAS zu erstellen.
+     * @param request       Das Request-Objekt, um Links für HATEOAS zu erstellen.
      * @return Ein Response mit dem Statuscode 200 und den gefundenen Vereine als CollectionModel oder Statuscode 404.
      */
     @GetMapping(produces = HAL_JSON_VALUE)
     @Operation(summary = "Suche mit Suchkriterien", tags = "Suchen")
     @ApiResponse(responseCode = "200", description = "CollectionModel mid den Vereine")
     @ApiResponse(responseCode = "404", description = "Keine Vereine gefunden")
-    CollectionModel<? extends VereinModel> find(
-        @RequestParam @NonNull final MultiValueMap<String, String> suchkriterien,
+    ResponseEntity<Object> find(
+        @RequestParam @NonNull final Map<String, String> suchkriterien,
         final HttpServletRequest request
     ) {
+        log.debug("find: queryParams={}", suchkriterien);
+        if (suchkriterien.size() > 1) {
+            return notFound().build();
+        }
         log.debug("find: suchkriterien={}", suchkriterien);
 
+        final Collection<Verein> vereine;
+        if (suchkriterien.isEmpty()) {
+            vereine = service.findAll();
+        } else {
+            final var fussballvereinIdStr = suchkriterien.get("fussballvereinId");
+            if (fussballvereinIdStr == null) {
+                return notFound().build();
+            }
+            final var fussballvereinId = UUID.fromString(fussballvereinIdStr);
+            vereine = service.findByFussballvereinId(fussballvereinId);
+        }
+
         final var baseUri = uriHelper.getBaseUri(request).toString();
-        final var models = service.find(suchkriterien)
+        final var models = vereine
             .stream()
             .map(verein -> {
                 final var model = new VereinModel(verein);
@@ -165,7 +177,7 @@ public class VereinGetController {
             })
             .toList();
         log.debug("find: {}", models);
-        return CollectionModel.of(models);
+        return ok(CollectionModel.of(models));
     }
 
     /**

@@ -14,10 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.acme.bestellung.repository;
+package com.acme.verein.repository;
 
-import java.util.Optional;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.client.FieldAccessException;
@@ -27,65 +25,68 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.reactive.function.client.WebClientException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import java.util.Optional;
+import java.util.UUID;
+
 /**
- * REST- oder GraphQL-Client für Kundedaten.
+ * REST- oder GraphQL-Client für Fussballvereindaten.
  *
  * @author <a href="mailto:Juergen.Zimmermann@h-ka.de">Jürgen Zimmermann</a>
  */
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class KundeRepository {
-    private final KundeRestRepository kundeRestRepository;
+public class FussballvereinRepository {
+    private final FussballvereinRestRepository fussballvereinRestRepository;
     private final HttpGraphQlClient graphQlClient;
 
     /**
-     * Kunde anhand der Kunde-ID suchen.
+     * Fussballverein anhand der Fussballverein-ID suchen.
      *
-     * @param kundeId Die Id des gesuchten Kunden.
-     * @return Der gefundene Kunde oder null.
-     * @throws KundeServiceException falls beim Zugriff auf den Web Service eine Exception eingetreten ist.
+     * @param fussballvereinId Die Id des gesuchten Fussballvereine.
+     * @return Der gefundene Fussballverein oder null.
+     * @throws FussballvereinServiceException falls beim Zugriff auf den Web Service eine Exception eingetreten ist.
      */
-    public Optional<Kunde> findById(final UUID kundeId) {
-        log.debug("findById: kundeId={}", kundeId);
+    public Optional<Fussballverein> findById(final UUID fussballvereinId) {
+        log.debug("findById: fussballvereinId={}", fussballvereinId);
 
-        final Kunde kunde;
+        final Fussballverein fussballverein;
         try {
-            kunde = kundeRestRepository.getKunde(kundeId.toString()).block();
+            fussballverein = fussballvereinRestRepository.getFussballverein(fussballvereinId.toString()).block();
         } catch (final WebClientResponseException.NotFound ex) {
             log.error("findById: WebClientResponseException.NotFound");
             return Optional.empty();
         } catch (final WebClientException ex) {
             // WebClientRequestException oder WebClientResponseException (z.B. ServiceUnavailable)
             log.error("findById: {}", ex.getClass().getSimpleName());
-            throw new KundeServiceException(ex);
+            throw new FussballvereinServiceException(ex);
         }
 
-        log.debug("findById: {}", kunde);
-        return Optional.ofNullable(kunde);
+        log.debug("findById: {}", fussballverein);
+        return Optional.ofNullable(fussballverein);
     }
 
     /**
-     * Die Emailadresse anhand der Kunde-ID suchen.
+     * Die Emailadresse anhand der Fussballverein-ID suchen.
      *
-     * @param kundeId Die Id des gesuchten Kunden.
+     * @param fussballvereinId Die Id des gesuchten Fussballvereine.
      * @return Die Emailadresse in einem Optional oder ein leeres Optional.
-     * @throws KundeServiceException falls beim Zugriff auf den Web Service eine Exception eingetreten ist.
+     * @throws FussballvereinServiceException falls beim Zugriff auf den Web Service eine Exception eingetreten ist.
      */
-    public Optional<String> findEmailById(final UUID kundeId) {
-        log.debug("findEmailById: kundeId={}", kundeId);
+    public Optional<String> findEmailById(final UUID fussballvereinId) {
+        log.debug("findEmailById: fussballvereinId={}", fussballvereinId);
         final var query = """
             query {
-                kunde(id: "%s") {
+                fussballverein(id: "%s") {
                     email
                 }
             }
-            """.formatted(kundeId);
+            """.formatted(fussballvereinId);
 
         final String email;
         try {
             email = graphQlClient.document(query)
-                .retrieve("kunde")
+                .retrieve("fussballverein")
                 .toEntity(EmailEntity.class)
                 .map(EmailEntity::email)
                 .block();
@@ -94,7 +95,7 @@ public class KundeRepository {
             return Optional.empty();
         } catch (final GraphQlTransportException ex) {
             log.warn("findEmailById: {}", ex.getClass().getSimpleName());
-            throw new KundeServiceException(ex);
+            throw new FussballvereinServiceException(ex);
         }
 
         log.debug("findEmailById: {}", email);

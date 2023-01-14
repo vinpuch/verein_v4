@@ -24,6 +24,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.acme.verein.repository.Fussballverein;
+import com.acme.verein.repository.FussballvereinServiceException;
+import com.acme.verein.repository.FussballvereinRepository;
 
 import java.util.*;
 
@@ -42,6 +45,7 @@ import java.util.*;
 @Slf4j
 public class VereinReadService {
     private final VereinRepository repo;
+    private final FussballvereinRepository fussballvereinRepo;
     private final SpecBuilder specBuilder;
 
     /**
@@ -58,6 +62,10 @@ public class VereinReadService {
         // admin: Vereinndaten evtl. nicht gefunden
         final var verein = vereinOpt.orElseThrow(() -> new NotFoundException(id));
         log.debug("findById: {}", verein);
+        final var vereinsname = fetchFussballvereinById(verein.getFussballvereinId()).vereinsname();
+        verein.setFussballvereinVereinsname(vereinsname);
+        final var email = fetchEmailById(verein.getFussballvereinId());
+        verein.setFussballvereinEmail(email);
         return verein;
     }
 
@@ -125,5 +133,81 @@ public class VereinReadService {
         }
         log.debug("findNamenByPrefix: {}", namen);
         return namen;
+    }
+
+
+
+    /**
+     * Vereine zur Fussballverein-ID suchen.
+     *
+     * @param fussballvereinId Die Id des gegebenen Fussballvereinn.
+     * @return Die gefundenen Vereine.
+     * @throws NotFoundException Falls keine Vereine gefunden wurden.
+     */
+    public Collection<Verein> findByFussballvereinId(final UUID fussballvereinId) {
+        log.debug("findByFussballvereinId: fussballvereinId={}", fussballvereinId);
+
+        final var vereine = repo.findByFussballvereinId(fussballvereinId);
+        if (vereine.isEmpty()) {
+            throw new NotFoundException();
+        }
+
+        final var fussballverein = fetchFussballvereinById(fussballvereinId);
+        final var vereinsname = fussballverein == null ? null : fussballverein.vereinsname();
+        final var email = fetchEmailById(fussballvereinId);
+        log.trace("findByFussballvereinId: nachname={}, email={}", vereinsname, email);
+        vereine.forEach(verein -> {
+            verein.setFussballvereinVereinsname(vereinsname);
+            verein.setFussballvereinEmail(email);
+        });
+
+        log.trace("findByFussballvereinId: vereine={}", vereine);
+        return vereine;
+    }
+
+    /**
+     * Alle Vereine ermitteln.
+     *
+     * @return Alle Vereine.
+     */
+    public Collection<Verein> findAll() {
+        final var vereine = repo.findAll();
+        vereine.forEach(verein -> {
+            // TODO Caching der bisher gefundenen Nachnamen
+            final var fussballvereinId = verein.getFussballvereinId();
+            final var fussballverein = fetchFussballvereinById(fussballvereinId);
+            final var email = fetchEmailById(fussballvereinId);
+            verein.setFussballvereinVereinsname(fussballverein.vereinsname());
+            verein.setFussballvereinEmail(email);
+        });
+        return vereine;
+    }
+
+    private Fussballverein fetchFussballvereinById(final UUID fussballvereinId) {
+        log.debug("findFussballvereinById: fussballvereinId={}", fussballvereinId);
+        try {
+            final var fussballverein = fussballvereinRepo
+                .findById(fussballvereinId)
+                .orElse(new Fussballverein("N/A", "n.a@acme.com"));
+            log.debug("findFussballvereinById: {}", fussballverein);
+            return fussballverein;
+        } catch (final FussballvereinServiceException ex) {
+            log.debug("findFussballvereinById: {}", ex.getRestException().getClass().getSimpleName());
+            return new Fussballverein("Exception", "exception@acme.com");
+        }
+    }
+
+
+    private String fetchEmailById(final UUID fussballvereinId) {
+        log.debug("findEmailById: fussballvereinId={}", fussballvereinId);
+        final var emailOpt = fussballvereinRepo.findEmailById(fussballvereinId);
+        String email;
+        try {
+            email = emailOpt.orElse("N/A");
+        } catch (final FussballvereinServiceException ex) {
+            log.debug("findEmailById: message = {}", ex.getGraphQlException().getMessage());
+            email = "N/A";
+        }
+        return email;
     }
 }

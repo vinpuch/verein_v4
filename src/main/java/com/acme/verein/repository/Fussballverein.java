@@ -14,29 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.acme.bestellung.repository;
-
-import lombok.Getter;
-import org.springframework.graphql.client.GraphQlTransportException;
-import org.springframework.web.reactive.function.client.WebClientException;
+package com.acme.verein.repository;
 
 /**
- * Exception-Klasse für die REST- oder GraphQL-Schnittstelle des Kunde-Service.
+ * Entity-Klasse für den REST-Client.
  *
  * @author <a href="mailto:Juergen.Zimmermann@h-ka.de">Jürgen Zimmermann</a>
+ * @param nachname Nachname
+ * @param email Emailadresse
  */
-@Getter
-public class KundeServiceException extends RuntimeException {
-    private final WebClientException restException;
-    private final GraphQlTransportException graphQlException;
-
-    KundeServiceException(final WebClientException restException) {
-        this.restException = restException;
-        graphQlException = null;
-    }
-
-    KundeServiceException(final GraphQlTransportException graphQlException) {
-        restException = null;
-        this.graphQlException = graphQlException;
-    }
+public record Fussballverein(String vereinsname, String email) {
 }

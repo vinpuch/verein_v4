@@ -27,6 +27,7 @@ import org.springframework.hateoas.server.core.Relation;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.UUID;
 
 /**
  * Model-Klasse für Spring HATEOAS. @lombok.Data fasst die Annotationen @ToString, @EqualsAndHashCode, @Getter, @Setter
@@ -37,7 +38,7 @@ import java.time.LocalDate;
  */
 @JsonPropertyOrder({
     "name", "email", "gruendungsdatum", "homepage",
-    "umsatz", "adresse"
+    "umsatz", "adresse, fussballvereinId,fussballvereinVerinsname, fussballvereinEmail "
 })
 @Relation(collectionRelation = "vereine", itemRelation = "verein")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
@@ -54,11 +55,20 @@ class VereinModel extends RepresentationModel<VereinModel> {
     private final URL homepage;
     private final Adresse adresse;
 
+    private final UUID fussballvereinId;
+
+    private final String fussballvereinVerinsname;
+
+    private final String fussballvereinEmail;
+
     VereinModel(final Verein verein) {
         name = verein.getName();
         email = verein.getEmail();
         gruendungsdatum = verein.getGruendungsdatum();
         homepage = verein.getHomepage();
         adresse = verein.getAdresse();
+        fussballvereinId = verein.getFussballvereinId();
+        fussballvereinVerinsname = verein.getFussballvereinVereinsname();
+        fussballvereinEmail = verein.getFussballvereinEmail();
     }
 }

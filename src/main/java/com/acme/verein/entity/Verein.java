@@ -133,6 +133,11 @@ public class Verein {
      */
     private URL homepage;
 
+    // der Spaltenwert referenziert einen Wert aus einer anderen DB
+    @Column(name = "fussballverein_id")
+    // @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.CHAR)
+    private UUID fussballvereinId;
+
 
     /**
      * Der Umsatz des Vereins.
@@ -173,4 +178,10 @@ public class Verein {
         gruendungsdatum = verein.gruendungsdatum;
         homepage = verein.homepage;
     }
+
+    @Transient
+    private String fussballvereinVereinsname;
+
+    @Transient
+    private String fussballvereinEmail;
 }

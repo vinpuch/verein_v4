@@ -17,10 +17,14 @@
 package com.acme.verein.rest;
 
 import com.acme.verein.entity.*;
+import com.acme.verein.entity.Verein;
+import com.acme.verein.repository.Fussballverein;
+import com.acme.verein.repository.FussballvereinRepository;
 
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * ValueObject für das Neuanlegen und Ändern eines neuen Vereine. Beim Lesen wird die Klasse VereinModel für die Ausgabe
@@ -41,7 +45,8 @@ record VereinDTO(
     LocalDate gruendungsdatum,
     URL homepage,
     UmsatzDTO umsatz,
-    AdresseDTO adresse
+    AdresseDTO adresse,
+    UUID fussballvereinId
 ) {
     /**
      * Konvertierung in ein Objekt des Anwendungskerns.
@@ -78,6 +83,7 @@ record VereinDTO(
             .adresse(adresseEntity)
             .erzeugt(null)
             .aktualisiert(null)
+            .fussballvereinId(fussballvereinId)
             .build();
     }
 }

@@ -93,4 +93,6 @@ public interface VereinRepository extends JpaRepository<Verein, UUID>, JpaSpecif
         ORDER BY v.name
         """)
     Collection<String> findNamenByPrefix(String prefix);
+    @EntityGraph(attributePaths = "bestellpositionen")
+    List<Verein> findByFussballvereinId(UUID fussballvereinId);
 }

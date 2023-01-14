@@ -39,7 +39,7 @@ IMPORTANT: Copyright (C) 2015 - present Jürgen Zimmermann, Hochschule Karlsruhe
 
 bla bla
 
-.Use Cases für den Microservice "kunde"
+.Use Cases für den Microservice "fussballverein"
 [plantuml,use-cases,svg]
 ----
 include::./use-cases.plantuml[]
@@ -47,7 +47,7 @@ include::./use-cases.plantuml[]
 
 bla bla
 
-.Komponenten des Microservice "kunde"
+.Komponenten des Microservice "fussballverein"
 [plantuml,komponenten,svg]
 ----
 include::./komponenten.plantuml[]

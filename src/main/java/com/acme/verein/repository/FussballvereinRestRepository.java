@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.acme.bestellung.repository;
+package com.acme.verein.repository;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.service.annotation.GetExchange;
@@ -28,13 +28,13 @@ import reactor.core.publisher.Mono;
  */
 @HttpExchange("/rest")
 @SuppressWarnings("InterfaceMayBeAnnotatedFunctional")
-public interface KundeRestRepository {
+public interface FussballvereinRestRepository {
     /**
-     * Einen Kundendatensatz vom Microservice "kunde" anzufordern.
+     * Einen Kundendatensatz vom Microservice "fussballverein" anzufordern.
      *
      * @param id ID des angeforderten Kunden
      * @return Mono-Objekt mit dem gefundenen Kunden
      */
     @GetExchange("/{id}")
-    Mono<Kunde> getKunde(@PathVariable String id);
+    Mono<Fussballverein> getFussballverein(@PathVariable String id);
 }
