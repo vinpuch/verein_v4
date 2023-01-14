@@ -16,12 +16,13 @@
  */
 package com.acme.verein.rest;
 
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
 import reactor.core.publisher.Mono;
+
+import java.util.Map;
 
 @HttpExchange("")
 @SuppressWarnings("WriteTag")
@@ -30,5 +31,5 @@ interface VereinRepository {
     Mono<VereinDownload> getVerein(@PathVariable String id);
 
     @GetExchange("")
-    Mono<VereineDownload> getVereine(@RequestParam MultiValueMap<String, String> suchkriterien);
+    Mono<VereineDownload> getVereine(@RequestParam Map<String, String> suchkriterien);
 }

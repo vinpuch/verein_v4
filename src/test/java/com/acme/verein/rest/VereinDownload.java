@@ -20,6 +20,7 @@ package com.acme.verein.rest;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @SuppressWarnings({"RecordComponentNumber", "WriteTag"})
 record VereinDownload(
@@ -29,6 +30,9 @@ record VereinDownload(
     URL homepage,
     UmsatzDTO umsatz,
     AdresseDTO adresse,
+    UUID fussballvereinId,
+    String fussballvereinVereinsname,
+    String fussballvereinEmail,
 
     @SuppressWarnings("RecordComponentName")
     Links _links

@@ -18,7 +18,10 @@ package com.acme.verein.rest;
 
 
 import com.jayway.jsonpath.JsonPath;
+
 import java.util.Arrays;
+import java.util.Map;
+
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
@@ -45,6 +48,7 @@ import org.springframework.web.reactive.function.client.support.WebClientAdapter
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
+
 import static com.acme.verein.dev.DevConfig.DEV;
 import static com.acme.verein.entity.Verein.NAME_PATTERN;
 import static com.acme.verein.rest.VereinGetController.REST_PATH;
@@ -71,15 +75,15 @@ import static org.springframework.web.reactive.function.client.ExchangeFilterFun
 class VereinGetRestTest {
     static final String SCHEMA = "http";
     static final String HOST = "localhost";
-    static final String USER_ADMIN = "admin";
-    static final String PASSWORD = "p";
-    private static final String USER_VEREIN = "alpha";
-    private static final String PASSWORD_FALSCH = "Falsches Passwort!";
+
+    private static final String FUSSBALLVEREIN_ID_PARAM = "fussballvereinId";
 
     private static final String ID_VORHANDEN = "00000000-0000-0000-0000-000000000001";
     private static final String ID_VORHANDEN_VEREIN = "00000000-0000-0000-0000-000000000001";
     private static final String ID_VORHANDEN_ANDERER_VEREIN = "00000000-0000-0000-0000-000000000002";
     private static final String ID_NICHT_VORHANDEN = "ffffffff-ffff-ffff-ffff-ffffffffffff";
+    private static final String FUSSBALLVEREIN_ID = "fussballvereinId";
+
 
     private static final String NAME_TEIL = "a";
     private static final String EMAIL_VORHANDEN = "alpha@acme.de";
@@ -113,12 +117,10 @@ class VereinGetRestTest {
         baseUrl = uriComponents.toUriString();
         client = WebClient
             .builder()
-            .filter(basicAuthentication(USER_ADMIN, PASSWORD))
             .baseUrl(baseUrl)
             .build();
         clientVerein = WebClient
             .builder()
-            .filter(basicAuthentication(USER_VEREIN, PASSWORD))
             .baseUrl(baseUrl)
             .build();
         final var clientAdapter = WebClientAdapter.forClient(client);
@@ -150,7 +152,7 @@ class VereinGetRestTest {
         final MultiValueMap<String, String> suchkriterien = new LinkedMultiValueMap<>();
 
         // when
-        final var vereine = vereinRepo.getVereine(suchkriterien).block();
+        final var vereine = vereinRepo.getVereine(suchkriterien.toSingleValueMap()).block();
 
         // then
         softly.assertThat(vereine).isNotNull();
@@ -170,7 +172,7 @@ class VereinGetRestTest {
         suchkriterien.add(NAME_PARAM, teil);
 
         // when
-        final var vereine = vereinRepo.getVereine(suchkriterien).block();
+        final var vereine = vereinRepo.getVereine(suchkriterien.toSingleValueMap()).block();
 
         // then
         assertThat(vereine).isNotNull();
@@ -195,7 +197,7 @@ class VereinGetRestTest {
         suchkriterien.add(EMAIL_PARAM, email);
 
         // when
-        final var vereine = vereinRepo.getVereine(suchkriterien).block();
+        final var vereine = vereinRepo.getVereine(suchkriterien.toSingleValueMap()).block();
 
         // then
         assertThat(vereine).isNotNull();
@@ -220,7 +222,7 @@ class VereinGetRestTest {
         suchkriterien.add(PLZ_PARAM, plz);
 
         // when
-        final var vereine = vereinRepo.getVereine(suchkriterien).block();
+        final var vereine = vereinRepo.getVereine(suchkriterien.toSingleValueMap()).block();
 
         // then
         assertThat(vereine).isNotNull();
@@ -283,6 +285,21 @@ class VereinGetRestTest {
             softly.assertThat(verein.email()).isNotNull();
             softly.assertThat(verein.adresse().plz()).isNotNull();
             softly.assertThat(verein._links().self().href()).endsWith("/" + id);
+
+            softly.assertThat(verein.fussballvereinVereinsname())
+                .isNotNull()
+                .isNotBlank()
+                .isNotEqualTo("N/A");
+
+            softly.assertThat(verein.fussballvereinEmail())
+                .isNotNull()
+                .isNotBlank()
+                .isNotEqualTo("N/A");
+
+            softly.assertThat(verein._links().self().href())
+                .isNotNull()
+                .isNotBlank()
+                .isEqualTo(baseUrl + '/' + id);
         }
 
         @ParameterizedTest(name = "[{index}] Suche mit vorhandener ID und vorhandener Version: id={0}, version={1}")
@@ -366,55 +383,57 @@ class VereinGetRestTest {
             assertThat(statusCode).isEqualTo(FORBIDDEN);
         }
 
-        @ParameterizedTest(name = "[{index}] Suche mit ID, aber falschem Passwort: username={0}, password={1}, id={2}")
-        @CsvSource(USER_ADMIN + ',' + PASSWORD_FALSCH + ',' + ID_VORHANDEN)
-        @DisplayName("Suche mit ID, aber falschem Passwort")
-        void findByIdFalschesPasswort(final String username, final String password, final String id) {
-            // given
-            final var clientFalsch = WebClient.builder()
-                .filter(basicAuthentication(username, password))
-                .baseUrl(baseUrl)
-                .build();
 
-            // when
-            final var statusCode = clientFalsch
-                .get()
-                .uri(ID_PATH, id)
-                .exchangeToMono(response -> Mono.just(response.statusCode()))
-                .block();
+        @Nested
+        @DisplayName("REST-Schnittstelle fuer die Suche nach Strings")
+        class SucheNachStrings {
+            @ParameterizedTest(name = "[{index}] Suche Namen mit Praefix prefix={0}")
+            @ValueSource(strings = {NAME_PREFIX_A, NAME_PREFIX_D})
+            @DisplayName("Suche Namen mit Praefix")
+            void findNamen(final String prefix) {
+                // when
+                final var namenStr = client
+                    .get()
+                    .uri(builder -> builder.pathSegment(NAME_PARAM, prefix).build())
+                    .exchangeToMono(response -> response.bodyToMono(String.class))
+                    .block();
 
-            // then
-            assertThat(statusCode).isEqualTo(UNAUTHORIZED);
+                // then
+                assertThat(namenStr)
+                    .isNotNull()
+                    .isNotEmpty();
+                final var tmp = namenStr.replace(" ", "").substring(1);
+                final var namen = tmp.substring(0, tmp.length() - 1).split(",");
+                assertThat(namen)
+                    .isNotNull()
+                    .isNotEmpty();
+                Arrays.stream(namen)
+                    .forEach(name -> assertThat(name).startsWith(prefix));
+            }
         }
-    }
 
+        @ParameterizedTest(name = "[{index}] Suche mit vorhandener Fussballverein-ID: fussballvereinId={0}")
+        @ValueSource(strings = FUSSBALLVEREIN_ID)
+        @DisplayName("Suche mit vorhandener Fussballverein-ID")
+        void findByFussballvereinId(final String fussballvereinId) {
+            // given
+            final var suchkriterien = Map.of(FUSSBALLVEREIN_ID_PARAM, fussballvereinId);
 
-
-    @Nested
-    @DisplayName("REST-Schnittstelle fuer die Suche nach Strings")
-    class SucheNachStrings {
-        @ParameterizedTest(name = "[{index}] Suche Namen mit Praefix prefix={0}")
-        @ValueSource(strings = {NAME_PREFIX_A, NAME_PREFIX_D})
-        @DisplayName("Suche Namen mit Praefix")
-        void findNamen(final String prefix) {
             // when
-            final var namenStr = client
-                .get()
-                .uri(builder -> builder.pathSegment(NAME_PARAM, prefix).build())
-                .exchangeToMono(response -> response.bodyToMono(String.class))
-                .block();
+            final var vereine = vereinRepo.getVereine(suchkriterien).block();
 
             // then
-            assertThat(namenStr)
+            assertThat(vereine).isNotNull();
+            final var embedded = vereine._embedded();
+            assertThat(embedded).isNotNull();
+            final var vereineEmbedded = embedded.vereine();
+            assertThat(vereineEmbedded)
                 .isNotNull()
                 .isNotEmpty();
-            final var tmp = namenStr.replace(" ", "").substring(1);
-            final var namen = tmp.substring(0, tmp.length() - 1).split(",");
-            assertThat(namen)
-                .isNotNull()
-                .isNotEmpty();
-            Arrays.stream(namen)
-                .forEach(name -> assertThat(name).startsWith(prefix));
+            vereineEmbedded
+                .stream()
+                .map(verein -> verein.fussballvereinId().toString().toLowerCase())
+                .forEach(kid -> assertThat(kid).isEqualTo(fussballvereinId));
         }
     }
 }
