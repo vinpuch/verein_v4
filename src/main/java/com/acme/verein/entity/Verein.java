@@ -68,6 +68,7 @@ import static jakarta.persistence.FetchType.LAZY;
     "MissingSummary",
     "RedundantSuppression"})
 public class Verein {
+    public static final String NAME_PATTERN = "[A-ZÄÖÜ][a-zäöüß]+(-[A-ZÄÖÜ][a-zäöüß]+)?";
 
     /**
      * Kleinster Wert für eine Kategorie.

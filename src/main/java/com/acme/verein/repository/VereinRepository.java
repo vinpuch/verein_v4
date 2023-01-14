@@ -34,11 +34,11 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface VereinRepository extends JpaRepository<Verein, UUID>, JpaSpecificationExecutor<Verein> {
-    @EntityGraph(attributePaths = {"adresse", "interessen"})
+    @EntityGraph(attributePaths = {"adresse"})
     @Override
     List<Verein> findAll();
 
-    @EntityGraph(attributePaths = {"adresse", "interessen"})
+    @EntityGraph(attributePaths = {"adresse"})
     @Override
     Optional<Verein> findById(UUID id);
 
