@@ -46,6 +46,7 @@ final class ConstraintViolationError implements GraphQLError {
      *
      * @return BAD_REQUEST
      */
+
     @Override
     public ErrorType getErrorType() {
         return BAD_REQUEST;

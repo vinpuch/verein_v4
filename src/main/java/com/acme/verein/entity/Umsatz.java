@@ -36,7 +36,6 @@ import lombok.ToString;
 /**
  * Geldbetrag und Währungseinheit für eine Umsatzangabe.
  *
- * @author <a href="mailto:Juergen.Zimmermann@h-ka.de">Jürgen Zimmermann</a>
  */
 
 @Entity

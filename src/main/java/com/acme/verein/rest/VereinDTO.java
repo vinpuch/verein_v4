@@ -15,28 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.acme.verein.rest;
-
-import com.acme.verein.entity.*;
+import com.acme.verein.entity.Adresse;
+import com.acme.verein.entity.Umsatz;
 import com.acme.verein.entity.Verein;
-import com.acme.verein.repository.Fussballverein;
-import com.acme.verein.repository.FussballvereinRepository;
-
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
-
 /**
- * ValueObject für das Neuanlegen und Ändern eines neuen Vereine. Beim Lesen wird die Klasse VereinModel für die Ausgabe
- * verwendet.
+ * ValueObject für das Neuanlegen und Ändern eines neuen Vereines.
  *
- * @author <a href="mailto:Juergen.Zimmermann@h-ka.de">Jürgen Zimmermann</a>
- * @param name Gültiger Name eines Vereine, d.h. mit einem geeigneten Muster.
- * @param email Email eines Vereine.
- * @param gruendungsdatum Das Gruendungsdatum eines Vereine.
- * @param homepage Die Homepage eines Vereine.
- * @param umsatz Der Umsatz eines Vereine.
- * @param adresse Die Adresse eines Vereine.
+ * @param name            Gültiger Name eines Vereines, d.h. mit einem geeigneten Muster.
+ * @param email           Email eines Vereines.
+ * @param gruendungsdatum Das Gruendungsdatum eines Vereines.
+ * @param homepage        Die Homepage eines Vereines.
+ * @param umsatz          Der Umsatz eines Vereines.
+ * @param adresse         Die Adresse eines Vereines.
+ * @param fussballvereinId Die Id des Fussballvereins
  */
 @SuppressWarnings("RecordComponentNumber")
 record VereinDTO(
@@ -51,26 +45,25 @@ record VereinDTO(
     /**
      * Konvertierung in ein Objekt des Anwendungskerns.
      *
-     *
      * @return Vereinobjekt für den Anwendungskern
      */
     Verein toVerein() {
         final var umsatzEntity = umsatz() == null
             ? null
             : Umsatz
-                .builder()
-                .id(null)
-                .betrag(umsatz().betrag())
-                .waehrung(umsatz().waehrung())
-                .build();
+            .builder()
+            .id(null)
+            .betrag(umsatz().betrag())
+            .waehrung(umsatz().waehrung())
+            .build();
         final var adresseEntity = adresse() == null
             ? null
             : Adresse
-                .builder()
-                .id(null)
-                .plz(adresse().plz())
-                .ort(adresse().ort())
-                .build();
+            .builder()
+            .id(null)
+            .plz(adresse().plz())
+            .ort(adresse().ort())
+            .build();
         return Verein
             .builder()
             .id(null)

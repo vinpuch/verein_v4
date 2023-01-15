@@ -17,10 +17,12 @@
 package com.acme.verein.repository;
 
 import com.acme.verein.entity.Verein;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -30,15 +32,14 @@ import org.springframework.stereotype.Repository;
 /**
  * Repository für den DB-Zugriff bei Vereine.
  *
- * @author <a href="mailto:Juergen.Zimmermann@h-ka.de">Jürgen Zimmermann</a>
  */
 @Repository
 public interface VereinRepository extends JpaRepository<Verein, UUID>, JpaSpecificationExecutor<Verein> {
-    @EntityGraph(attributePaths = {"adresse"})
+    @EntityGraph
     @Override
     List<Verein> findAll();
 
-    @EntityGraph(attributePaths = {"adresse"})
+    @EntityGraph
     @Override
     Optional<Verein> findById(UUID id);
 
@@ -53,7 +54,7 @@ public interface VereinRepository extends JpaRepository<Verein, UUID>, JpaSpecif
         FROM   Verein v
         WHERE  lower(v.email) LIKE concat(lower(:email), '%')
         """)
-    @EntityGraph(attributePaths = {"adresse", "interessen"})
+    @EntityGraph
     Optional<Verein> findByEmail(String email);
 
     /**
@@ -77,7 +78,7 @@ public interface VereinRepository extends JpaRepository<Verein, UUID>, JpaSpecif
         WHERE    lower(v.name) LIKE concat('%', lower(:name), '%')
         ORDER BY v.id
         """)
-    @EntityGraph(attributePaths = {"adresse", "interessen"})
+    @EntityGraph
     Collection<Verein> findByName(CharSequence name);
 
     /**
@@ -93,6 +94,13 @@ public interface VereinRepository extends JpaRepository<Verein, UUID>, JpaSpecif
         ORDER BY v.name
         """)
     Collection<String> findNamenByPrefix(String prefix);
-    @EntityGraph(attributePaths = "bestellpositionen")
+
+    /**
+     * Bestellungen zu gegebener FussballvereinId aus der DB ermitteln.
+     *
+     * @param fussballvereinId Fussballverein-Id für die Suche
+     * @return Liste der gefundenen vereine
+     */
+    @EntityGraph(attributePaths = "vereinpositionen")
     List<Verein> findByFussballvereinId(UUID fussballvereinId);
 }

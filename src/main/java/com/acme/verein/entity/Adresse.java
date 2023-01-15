@@ -37,7 +37,6 @@ import lombok.ToString;
 /**
  * Adressdaten für die Anwendungslogik und zum Abspeichern in der DB.
  *
- * @author <a href="mailto:Juergen.Zimmermann@h-ka.de">Jürgen Zimmermann</a>
  */
 @Entity
 @Table(name = "adresse")
@@ -49,14 +48,16 @@ import lombok.ToString;
 @Builder
 @SuppressWarnings({"JavadocDeclaration", "RequireEmptyLineBeforeBlockTagGroup"})
 public class Adresse {
-    @Id
-    @GeneratedValue
-    @JsonIgnore
-    private UUID id;
+
     /**
      * Konstante für den regulären Ausdruck einer Postleitzahl als 5-stellige Zahl mit führender Null.
      */
     public static final String PLZ_PATTERN = "^\\d{5}$";
+    @Id
+    @GeneratedValue
+    @JsonIgnore
+    private UUID id;
+
 
     /**
      * Die Postleitzahl für die Adresse.
@@ -76,4 +77,7 @@ public class Adresse {
      */
     @NotBlank
     private String ort;
+
+
+
 }

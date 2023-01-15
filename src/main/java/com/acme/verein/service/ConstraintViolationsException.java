@@ -35,8 +35,7 @@ public class ConstraintViolationsException extends RuntimeException {
     private final Collection<ConstraintViolation<Verein>> violations;
 
     ConstraintViolationsException(
-        @SuppressWarnings("ParameterHidesMemberVariable")
-        final Collection<ConstraintViolation<Verein>> violations
+        @SuppressWarnings("ParameterHidesMemberVariable") final Collection<ConstraintViolation<Verein>> violations
     ) {
         super("Constraints sind verletzt");
         this.violations = violations;

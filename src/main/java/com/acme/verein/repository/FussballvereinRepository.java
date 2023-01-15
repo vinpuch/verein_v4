@@ -31,7 +31,6 @@ import java.util.UUID;
 /**
  * REST- oder GraphQL-Client für Fussballvereindaten.
  *
- * @author <a href="mailto:Juergen.Zimmermann@h-ka.de">Jürgen Zimmermann</a>
  */
 @Repository
 @RequiredArgsConstructor

@@ -22,9 +22,12 @@ package org.springframework {
         interface "@RequestMapping" as RequestMapping
         interface "@PathVariable" as PathVariable
         interface "@RequestParam" as RequestParam
-        interface "@ExceptionHandler" as ExceptionHandler
         interface "@ResponseStatus" as ResponseStatus
         interface "@GetMapping" as GetMapping
+    }
+
+ package http {
+        class ResponseEntity<T>
     }
 
     package hateoas {
@@ -39,41 +42,55 @@ package jakarta.servlet.http {
 package java.util {
     interface Map<K,V>
     class UUID
+
+        UUID .up[hidden].> HttpServletRequest
+
 }
 
 package com.acme.verein {
+package entity {
+        class Verein << entity >>
+    }
+
     package service {
         class VereinReadService << control >> << @Service >>
-        class NotFoundException
+
     }
 
     package rest #DDDDDD {
         class VereinModel <<entity>>
 
         class VereinGetController << boundary >> << @RestController >> << @RequestMapping >> {
-            + @GetMapping findById(@PathVariable id: UUID, request: HttpServletRequest): VereinModel
-            + @GetMapping find(@RequestParam queryParams: Map<String, String>, request: HttpServletRequest): CollectionModel<VereinModel>
-            + @GetMapping findbyNamenPrefix(@PathVariable prefix: String): String
-            + @ExceptionHandler onNotFound(ex: NotFoundException): void
+            + @GetMapping findById(@PathVariable id: UUID, @RequestHeader("If-None-Match") version: Optional<String>, request: HttpServletRequest): VereinModel
+            + @GetMapping find(@RequestParam suchkriterien: Map<String, String>, request: HttpServletRequest): ResponseEntity<Object>
+            + @GetMapping findNamenByPrefix(@PathVariable prefix: String): String
         }
 
         VereinGetController o--> "1" VereinReadService : service
+
+
         VereinGetController ..> VereinModel
+        VereinGetController ..> Verein
+
 
         VereinGetController .left.> HttpServletRequest
 
-        VereinGetController .up.> RequestMapping
         VereinGetController .up.> RestController
-        VereinGetController .up.> CollectionModel
+        VereinGetController .up.> ResponseEntity
+
+        VereinGetController .up.> RequestMapping
         VereinGetController .up.> PathVariable
+
+        VereinGetController .up.> CollectionModel
         VereinGetController .up.> RequestParam
         VereinGetController .up.> ResponseStatus
-        VereinGetController .up.> ExceptionHandler
         VereinGetController .up.> GetMapping
 
         VereinGetController .down.> UUID
         VereinGetController .down.> Map
 
+
+        VereinModel ..> Verein
         VereinModel .[hidden].> VereinReadService
     }
 }

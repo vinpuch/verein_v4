@@ -21,21 +21,36 @@ package java.util {
     interface Map<K,V>
     class UUID
 }
-
+package org.springframework {
+    package stereotype {
+        interface Service
+    }
+     package transaction.annotation {
+            interface Transactional
+        }
 package com.acme.verein {
     package entity {
         class Verein << entity >>
+
+         Verein .up[hidden].> UUID
+         Verein .up[hidden].> Service
+         Verein .up[hidden].> Transactional
     }
 
     package repository {
-        class VereinRepository << control >> << @Repository >>
-    }
+            interface VereinRepository << control >>
+        }
 
     package service #DDDDDD {
         class VereinReadService << control >> << @Service >> {
             + findById(id: UUID): Verein
-            + find(suchkriterien: Map<String, String>): Collection<Verein>
+            + find(suchkriterien: Map<String, List<String>>): Collection<Verein>
             + findNamenByPrefix(prefix: String): Collection<String>
+            + findByFussballvereinId(fussballvereinId: UUID): Collection<Verein>
+            + findAll(): Collection<Verein>
+            + fetchFussballvereinById(fussballvereinId: UUID): Fussballverein
+            + fetchEmailById(fussballvereinId: UUID): String
+
         }
 
         VereinReadService o--> VereinRepository : repo
@@ -43,6 +58,12 @@ package com.acme.verein {
         VereinReadService .up.> UUID
         VereinReadService .up> Collection
         VereinReadService .up.> Map
+        VereinReadService .up.> List
+        VereinReadService .up.> Service
+        VereinReadService ..> Transactional
+
+
+
     }
 }
 

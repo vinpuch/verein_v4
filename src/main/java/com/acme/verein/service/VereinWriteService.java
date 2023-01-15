@@ -71,14 +71,14 @@ public class VereinWriteService {
     /**
      * Einen vorhandenen Vereine aktualisieren.
      *
-     * @param verein Das Objekt mit den neuen Daten (ohne ID)
-     * @param id ID des zu aktualisierenden Vereine
+     * @param verein  Das Objekt mit den neuen Daten (ohne ID)
+     * @param id      ID des zu aktualisierenden Vereine
      * @param version Die erforderliche Version
      * @return Aktualisierter Verein mit erhöhter Versionsnummer
      * @throws ConstraintViolationsException Falls mindestens ein Constraint verletzt ist.
-     * @throws NotFoundException Kein Verein zur ID vorhanden.
-     * @throws VersionOutdatedException Die Versionsnummer ist veraltet und nicht aktuell.
-     * @throws EmailExistsException Es gibt bereits einen Vereine mit der Emailadresse.
+     * @throws NotFoundException             Kein Verein zur ID vorhanden.
+     * @throws VersionOutdatedException      Die Versionsnummer ist veraltet und nicht aktuell.
+     * @throws EmailExistsException          Es gibt bereits einen Vereine mit der Emailadresse.
      */
     @Transactional
     public Verein update(final Verein verein, final UUID id, final int version) {

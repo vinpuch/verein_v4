@@ -16,6 +16,7 @@
  */
 package com.acme.verein.graphql;
 
+
 import graphql.GraphQLError;
 import graphql.language.SourceLocation;
 

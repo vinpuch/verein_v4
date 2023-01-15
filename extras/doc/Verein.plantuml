@@ -1,0 +1,102 @@
+' Copyright (C) 2019 - present Juergen Zimmermann, Hochschule Karlsruhe
+'
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+'
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+'
+' You should have received a copy of the GNU General Public License
+' along with this program.  If not, see <https://www.gnu.org/licenses/>.
+@startuml Verein
+
+skinparam classAttributeIconSize 0
+' skinparam monochrome true
+
+package java {
+    package util {
+        class UUID
+        class URL
+        class Currency
+    }
+
+    package math {
+        class BigDecimal
+    }
+
+    package time {
+        class LocalDate
+        class LocalDateTime
+
+    }
+
+    LocalDate .right[hidden].> LocalDateTime
+       LocalDateTime .[hidden].> Currency
+       Currency .[hidden].> BigDecimal
+}
+package jakarta.persistence {
+    interface "@Entity" as Entity
+    interface "@Table" as Table
+    Entity -[hidden]down-> Table
+    LocalDateTime .up[hidden].> Table
+}
+
+package com.acme.verein {
+    package entity #DDDDDD {
+        class Umsatz << entity >> {
+            @Id @GeneratedValue @JsonIgnore id : UUID
+            betrag: BigDecimal
+            waehrung: Currency
+        }
+        Umsatz ..> UUID
+
+ class Adresse << entity >> {
+            @Id @GeneratedValue @JsonIgnore id : UUID
+            plz: String
+            ort: String
+        }
+        Adresse ..> UUID
+
+    class Verein << entity >> {
+    @Id @GeneratedValue id : UUID
+                @Version version : Int
+         name : String
+         email : String
+         gruendungsdatum: LocalDate
+         homepage: URL
+         fussballverein: UUID
+         umsatz: Umsatz
+         erzeugt: LocalDateTime
+         aktualisiert: LocalDateTime
+         adresse: Adresse
+         @CreationTimestamp erzeugt: LocalDateTime
+         @UpdateTimestamp aktualisiert: LocalDateTime
+         @Transient fussballvereinVereinsname: String
+         @Transient fussballvereinEmail: String
+    }
+  Verein *--> "0..1" Umsatz : @OneToOne(cascade = [...]) @JoinColumn(...) umsatz
+        Verein *--> "1" Adresse :  @OneToOne(cascade = [...]) @JoinColumn(...) adresse
+
+    Verein *--> "0..1" Umsatz: umsatz
+
+    Verein ..> UUID
+    Verein ..> LocalDate
+    Verein ..> LocalDateTime
+
+    Verein ..> URL
+    Verein .right.> Entity
+    Verein .right.> Table
+
+    Umsatz ..> Currency
+    Umsatz ..> BigDecimal
+}
+
+hide empty members
+
+footer (c) Juergen Zimmermann
+
+@enduml

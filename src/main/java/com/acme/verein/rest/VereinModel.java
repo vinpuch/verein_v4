@@ -16,7 +16,8 @@
  */
 package com.acme.verein.rest;
 
-import com.acme.verein.entity.*;
+import com.acme.verein.entity.Adresse;
+import com.acme.verein.entity.Verein;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -34,7 +35,6 @@ import java.util.UUID;
  * und @RequiredArgsConstructor zusammen.
  * <img src="../../../../../asciidoc/VereinModel.svg" alt="Klassendiagramm">
  *
- * @author <a href="mailto:Juergen.Zimmermann@h-ka.de">Jürgen Zimmermann</a>
  */
 @JsonPropertyOrder({
     "name", "email", "gruendungsdatum", "homepage",

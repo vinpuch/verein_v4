@@ -19,7 +19,6 @@ package com.acme.verein.rest;
 
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 @SuppressWarnings({"RecordComponentNumber", "WriteTag"})

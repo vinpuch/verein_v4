@@ -22,8 +22,7 @@ import java.util.Currency;
 /**
  * ValueObject für das Neuanlegen und Ändern eines neuen Vereine.
  *
- * @author <a href="mailto:Juergen.Zimmermann@h-ka.de">Jürgen Zimmermann</a>
- * @param betrag Betrag
+ * @param betrag   Betrag
  * @param waehrung Währung
  */
 record UmsatzDTO(

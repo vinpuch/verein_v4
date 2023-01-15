@@ -21,7 +21,7 @@ package com.acme.verein.config;
  *
  * @author <a href="mailto:Juergen.Zimmermann@h-ka.de">Jürgen Zimmermann</a>
  */
-public final class AppConfig implements SecurityConfig {
+public final class AppConfig {
     AppConfig() {
     }
 }

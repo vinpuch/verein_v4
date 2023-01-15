@@ -18,7 +18,6 @@ package com.acme.verein.graphql;
 
 import org.springframework.util.LinkedMultiValueMap;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

@@ -60,8 +60,6 @@ import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.NOT_MODIFIED;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-import static org.springframework.web.reactive.function.client.ExchangeFilterFunctions.basicAuthentication;
 
 @Tag("integration")
 @Tag("rest")
@@ -75,39 +73,30 @@ import static org.springframework.web.reactive.function.client.ExchangeFilterFun
 class VereinGetRestTest {
     static final String SCHEMA = "http";
     static final String HOST = "localhost";
-
     private static final String FUSSBALLVEREIN_ID_PARAM = "fussballvereinId";
-
     private static final String ID_VORHANDEN = "00000000-0000-0000-0000-000000000001";
     private static final String ID_VORHANDEN_VEREIN = "00000000-0000-0000-0000-000000000001";
     private static final String ID_VORHANDEN_ANDERER_VEREIN = "00000000-0000-0000-0000-000000000002";
     private static final String ID_NICHT_VORHANDEN = "ffffffff-ffff-ffff-ffff-ffffffffffff";
     private static final String FUSSBALLVEREIN_ID = "fussballvereinId";
-
-
     private static final String NAME_TEIL = "a";
     private static final String EMAIL_VORHANDEN = "alpha@acme.de";
     private static final String PLZ_VORHANDEN = "1";
     private static final String NAME_PREFIX_A = "A";
     private static final String NAME_PREFIX_D = "D";
-
     private static final String ID_PATH = "/{id}";
     private static final String NAME_PARAM = "name";
     private static final String EMAIL_PARAM = "email";
     private static final String PLZ_PARAM = "plz";
-
     private final String baseUrl;
     private final WebClient client;
     private final WebClient clientVerein;
     private final VereinRepository vereinRepo;
-
     @InjectSoftAssertions
     private SoftAssertions softly;
-
     VereinGetRestTest(@LocalServerPort final int port, final ApplicationContext ctx) {
         final var getController = ctx.getBean(VereinGetController.class);
         assertThat(getController).isNotNull();
-
         final var uriComponents = UriComponentsBuilder.newInstance()
             .scheme(SCHEMA)
             .host(HOST)
@@ -129,13 +118,11 @@ class VereinGetRestTest {
             .build();
         vereinRepo = proxyFactory.createClient(VereinRepository.class);
     }
-
     @Test
     @DisplayName("Immer erfolgreich")
     void immerErfolgreich() {
         assertThat(true).isTrue();
     }
-
     @Test
     @DisplayName("Noch nicht fertig")
     @Disabled
@@ -143,7 +130,6 @@ class VereinGetRestTest {
         //noinspection DataFlowIssue
         assertThat(false).isTrue();
     }
-
     @Test
     @DisplayName("Suche nach allen Vereine")
     @SuppressWarnings("DataFlowIssue")
@@ -162,7 +148,6 @@ class VereinGetRestTest {
             .isNotNull()
             .isNotEmpty();
     }
-
     @ParameterizedTest(name = "[{index}] Suche mit vorhandenem (Teil-) Namen: teil={0}")
     @ValueSource(strings = NAME_TEIL)
     @DisplayName("Suche mit vorhandenem (Teil-) Namen")
@@ -170,10 +155,8 @@ class VereinGetRestTest {
         // given
         final MultiValueMap<String, String> suchkriterien = new LinkedMultiValueMap<>();
         suchkriterien.add(NAME_PARAM, teil);
-
         // when
         final var vereine = vereinRepo.getVereine(suchkriterien.toSingleValueMap()).block();
-
         // then
         assertThat(vereine).isNotNull();
         final var embedded = vereine._embedded();
@@ -187,7 +170,6 @@ class VereinGetRestTest {
             .map(VereinDownload::name)
             .forEach(name -> softly.assertThat(name).containsIgnoringCase(teil));
     }
-
     @ParameterizedTest(name = "[{index}] Suche mit vorhandener Email: email={0}")
     @ValueSource(strings = EMAIL_VORHANDEN)
     @DisplayName("Suche mit vorhandener Email")
@@ -195,10 +177,8 @@ class VereinGetRestTest {
         // given
         final MultiValueMap<String, String> suchkriterien = new LinkedMultiValueMap<>();
         suchkriterien.add(EMAIL_PARAM, email);
-
         // when
         final var vereine = vereinRepo.getVereine(suchkriterien.toSingleValueMap()).block();
-
         // then
         assertThat(vereine).isNotNull();
         final var embedded = vereine._embedded();
@@ -211,7 +191,6 @@ class VereinGetRestTest {
             .extracting(VereinDownload::email)
             .isEqualTo(email);
     }
-
     @ParameterizedTest(name = "[{index}] Suche mit vorhandenem Namen und PLZ: name={0}, plz={1}")
     @CsvSource(NAME_TEIL + ',' + PLZ_VORHANDEN)
     @DisplayName("Suche mit vorhandenem Namen und PLZ")
@@ -220,10 +199,8 @@ class VereinGetRestTest {
         final MultiValueMap<String, String> suchkriterien = new LinkedMultiValueMap<>();
         suchkriterien.add(NAME_PARAM, name);
         suchkriterien.add(PLZ_PARAM, plz);
-
         // when
         final var vereine = vereinRepo.getVereine(suchkriterien.toSingleValueMap()).block();
-
         // then
         assertThat(vereine).isNotNull();
         assertThat(vereine._embedded()).isNotNull();
@@ -247,7 +224,6 @@ class VereinGetRestTest {
         @DisplayName("Suche mit vorhandener ID und JsonPath")
         void findByIdJson(final String id) {
             // given
-
             // when
             final var body = client
                 .get()
@@ -255,7 +231,6 @@ class VereinGetRestTest {
                 .accept(HAL_JSON)
                 .exchangeToMono(response -> response.bodyToMono(String.class))
                 .block();
-
             // then
             assertThat(body).isNotNull().isNotBlank();
 
@@ -383,6 +358,29 @@ class VereinGetRestTest {
             assertThat(statusCode).isEqualTo(FORBIDDEN);
         }
 
+        @ParameterizedTest(name = "[{index}] Suche mit vorhandener Fussballverein-ID: fussballvereinId={0}")
+        @ValueSource(strings = FUSSBALLVEREIN_ID)
+        @DisplayName("Suche mit vorhandener Fussballverein-ID")
+        void findByFussballvereinId(final String fussballvereinId) {
+            // given
+            final var suchkriterien = Map.of(FUSSBALLVEREIN_ID_PARAM, fussballvereinId);
+
+            // when
+            final var vereine = vereinRepo.getVereine(suchkriterien).block();
+
+            // then
+            assertThat(vereine).isNotNull();
+            final var embedded = vereine._embedded();
+            assertThat(embedded).isNotNull();
+            final var vereineEmbedded = embedded.vereine();
+            assertThat(vereineEmbedded)
+                .isNotNull()
+                .isNotEmpty();
+            vereineEmbedded
+                .stream()
+                .map(verein -> verein.fussballvereinId().toString().toLowerCase())
+                .forEach(kid -> assertThat(kid).isEqualTo(fussballvereinId));
+        }
 
         @Nested
         @DisplayName("REST-Schnittstelle fuer die Suche nach Strings")
@@ -412,28 +410,5 @@ class VereinGetRestTest {
             }
         }
 
-        @ParameterizedTest(name = "[{index}] Suche mit vorhandener Fussballverein-ID: fussballvereinId={0}")
-        @ValueSource(strings = FUSSBALLVEREIN_ID)
-        @DisplayName("Suche mit vorhandener Fussballverein-ID")
-        void findByFussballvereinId(final String fussballvereinId) {
-            // given
-            final var suchkriterien = Map.of(FUSSBALLVEREIN_ID_PARAM, fussballvereinId);
-
-            // when
-            final var vereine = vereinRepo.getVereine(suchkriterien).block();
-
-            // then
-            assertThat(vereine).isNotNull();
-            final var embedded = vereine._embedded();
-            assertThat(embedded).isNotNull();
-            final var vereineEmbedded = embedded.vereine();
-            assertThat(vereineEmbedded)
-                .isNotNull()
-                .isNotEmpty();
-            vereineEmbedded
-                .stream()
-                .map(verein -> verein.fussballvereinId().toString().toLowerCase())
-                .forEach(kid -> assertThat(kid).isEqualTo(fussballvereinId));
-        }
     }
 }
