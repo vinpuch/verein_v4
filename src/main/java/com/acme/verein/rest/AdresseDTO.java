@@ -17,9 +17,8 @@
 package com.acme.verein.rest;
 
 /**
- * ValueObject für das Neuanlegen und Ändern eines neuen Vereine.
+ * ValueObject für das Neuanlegen und Ändern eines neuen Vereines.
  *
- * @author <a href="mailto:Juergen.Zimmermann@h-ka.de">Jürgen Zimmermann</a>
  * @param plz Postleitzahl
  * @param ort Ort
  */

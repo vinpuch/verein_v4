@@ -23,7 +23,6 @@ import java.util.Locale;
 import org.apache.catalina.util.ServerInfo;
 import org.springframework.boot.SpringBootVersion;
 import org.springframework.core.SpringVersion;
-import org.springframework.security.core.SpringSecurityCoreVersion;
 
 /**
  * Banner als String-Konstante für den Start des Servers.
@@ -64,7 +63,6 @@ public final class Banner {
         (C) Juergen Zimmermann, Hochschule Karlsruhe
         Version              1.0
         Spring Boot          %s
-        Spring Security      %s
         Spring Framework     %s
         Tomcat               %s
         Java                 %s
@@ -80,7 +78,6 @@ public final class Banner {
         """
         .formatted(
             SpringBootVersion.getVersion(),
-            SpringSecurityCoreVersion.getVersion(),
             SpringVersion.getVersion(),
             ServerInfo.getServerInfo(),
             JAVA,

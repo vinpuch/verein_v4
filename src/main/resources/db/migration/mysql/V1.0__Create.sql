@@ -45,10 +45,12 @@ CREATE TABLE IF NOT EXISTS verein (
     email         VARCHAR(40) UNIQUE NOT NULL,
 
                   -- https://dev.mysql.com/doc/refman/8.0/en/date-and-time-types.html
-    gruendungsdatumdatum  DATE,
+    gruendungsdatum DATE,
     homepage      VARCHAR(40),
     umsatz_id     BINARY(16) REFERENCES umsatz,
     adresse_id    BINARY(16) NOT NULL REFERENCES adresse,
+  fussballverein_id BINARY(16),
+
                   -- TIMESTAMP nur zwischen '1970-01-01 00:00:01' und '2038-01-19 03:14:07'
                   -- https://dev.mysql.com/doc/refman/8.0/en/date-and-time-types.html
     erzeugt       DATETIME NOT NULL,

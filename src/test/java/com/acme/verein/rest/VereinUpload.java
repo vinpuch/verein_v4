@@ -18,7 +18,6 @@ package com.acme.verein.rest;
 
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.List;
 
 @SuppressWarnings({"WriteTag", "RecordComponentNumber"})
 record VereinUpload(

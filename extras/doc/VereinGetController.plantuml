@@ -1,0 +1,117 @@
+' Copyright (C) 2019 - present Juergen Zimmermann, Hochschule Karlsruhe
+'
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+'
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+'
+' You should have received a copy of the GNU General Public License
+' along with this program.  If not, see <https://www.gnu.org/licenses/>.
+@startuml VereinGetController
+
+skinparam classAttributeIconSize 0
+
+package org.springframework {
+    package web.bind.annotation {
+        interface "@RestController" as RestController
+        interface "@RequestMapping" as RequestMapping
+        interface "@PathVariable" as PathVariable
+        interface "@RequestParam" as RequestParam
+        interface "@GetMapping" as GetMapping
+        interface "@ExceptionHandler" as ExceptionHandler
+        interface "@ResponseStatus" as ResponseStatus
+           }
+
+ package http {
+        class ResponseEntity<T>
+    }
+
+    package hateoas {
+        class CollectionModel<E>
+    }
+}
+
+package jakarta.servlet.http {
+    interface HttpServletRequest
+}
+
+package java.util {
+    interface Map<K,V>
+    class UUID
+
+        UUID .up[hidden].> HttpServletRequest
+
+}
+
+package com.acme.verein {
+package entity {
+        class Verein << entity >>
+    }
+
+    package service {
+        class VereinReadService << control >> << @Service >>
+class NotFoundException
+
+ VereinReadService .right[hidden].> NotFoundException
+    }
+
+    package rest #DDDDDD {
+        class VereinModel <<entity>>
+
+        class VereinGetController << boundary >> << @RestController >> << @RequestMapping >> {
+            + @GetMapping findById(@PathVariable id: UUID, @RequestHeader("If-None-Match") version: Optional<String>, request: HttpServletRequest): VereinModel
+            + @GetMapping find(@RequestParam suchkriterien: Map<String, String>, request: HttpServletRequest): ResponseEntity<Object>
+            + @GetMapping findNamenByPrefix(@PathVariable prefix: String): String
+        }
+
+         class CommonExceptionHandler << @ControllerAdvice >> {
+                    + @ExceptionHandler @ResponseStatus onNotFound(ex: NotFoundException)
+
+                }
+
+        VereinGetController o--> "1" VereinReadService : service
+
+
+        VereinGetController ..> VereinModel
+        VereinGetController ..> Verein
+
+
+        VereinGetController .up.> HttpServletRequest
+
+        VereinGetController .up.> RestController
+        VereinGetController .up.> ResponseEntity
+
+        VereinGetController .up.> RequestMapping
+        VereinGetController .up.> PathVariable
+
+        VereinGetController .up.> CollectionModel
+        VereinGetController .up.> RequestParam
+        VereinGetController .up.> ResponseStatus
+        VereinGetController .up.> GetMapping
+        VereinGetController .up-> ExceptionHandler
+
+        CommonExceptionHandler .up.> ExceptionHandler
+                CommonExceptionHandler .up.> ResponseStatus
+                CommonExceptionHandler ..> NotFoundException
+CommonExceptionHandler .up[hidden].> VereinModel
+        CommonExceptionHandler .[hidden].> Verein
+
+        VereinGetController .down.> UUID
+        VereinGetController .down.> Map
+
+
+        VereinModel ..> Verein
+        VereinModel .[hidden].> VereinReadService
+    }
+}
+
+hide empty members
+
+footer (c) Juergen Zimmermann
+
+@enduml

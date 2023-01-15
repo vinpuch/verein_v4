@@ -17,7 +17,7 @@
 #           docker compose down
 
 # docker compose exec mysql bash
-# mysql --user=root --password=p
+# mysql --user=q --password=p
 
 ---
 # https://docs.docker.com/compose/compose-file

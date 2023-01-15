@@ -19,9 +19,8 @@ package com.acme.verein.repository;
 /**
  * Entity-Klasse für den REST-Client.
  *
- * @author <a href="mailto:Juergen.Zimmermann@h-ka.de">Jürgen Zimmermann</a>
- * @param nachname Nachname
- * @param email Emailadresse
+ * @param vereinsname Vereinsname
+ * @param email    Emailadresse
  */
 public record Fussballverein(String vereinsname, String email) {
 }

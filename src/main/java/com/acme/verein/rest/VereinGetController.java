@@ -30,25 +30,32 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.LinkRelation;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 import static com.acme.verein.rest.VereinGetController.REST_PATH;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.NOT_MODIFIED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.ResponseEntity.*;
+import static org.springframework.http.ResponseEntity.notFound;
+import static org.springframework.http.ResponseEntity.ok;
+import static org.springframework.http.ResponseEntity.status;
 
 /**
  * Eine @RestController-Klasse bildet die REST-Schnittstelle, wobei die HTTP-Methoden, Pfade und MIME-Typen auf die
  * Methoden der Klasse abgebildet werden. Public, damit Pfade für Zugriffsschutz verwendet werden können.
  * <img src="../../../../../asciidoc/VereinGetController.svg" alt="Klassendiagramm">
  *
- * @author <a href="mailto:Juergen.Zimmermann@h-ka.de">Jürgen Zimmermann</a>
  */
 @RestController
 @RequestMapping(REST_PATH)
@@ -78,13 +85,13 @@ public class VereinGetController {
     private final UriHelper uriHelper;
 
     // https://localhost:8080/swagger-ui.html
+
     /**
      * Suche anhand der Verein-ID als Pfad-Parameter.
      *
-     * @param id ID des zu suchenden Vereine
+     * @param id      ID des zu suchenden Vereine
      * @param version Versionsnummer aus dem Header If-None-Match
      * @param request Das Request-Objekt, um Links für HATEOAS zu erstellen.
-     * @param authentication Authentication-Objekt für Security
      * @return Ein Response mit dem Statuscode 200 und dem gefundenen Vereine mit Atom-Links oder Statuscode 404.
      */
     @GetMapping(path = "{id:" + ID_PATTERN + "}", produces = HAL_JSON_VALUE)
@@ -95,16 +102,9 @@ public class VereinGetController {
     ResponseEntity<VereinModel> findById(
         @PathVariable final UUID id,
         @RequestHeader("If-None-Match") final Optional<String> version,
-        final HttpServletRequest request,
-        final Authentication authentication
+        final HttpServletRequest request
     ) {
-        final var user = (UserDetails) authentication.getPrincipal();
-        log.debug("findById: id={}, version={}, user={}", id, version, user);
-        // KEIN Optional https://github.com/spring-projects/spring-security/issues/3208
-        //noinspection DuplicatedCode
-        if (user == null) {
-            return status(FORBIDDEN).build();
-        }
+
 
         // Anwendungskern
         final var verein = service.findById(id);

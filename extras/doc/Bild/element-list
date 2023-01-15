@@ -1,0 +1,9 @@
+com.acme.verein
+com.acme.verein.config
+com.acme.verein.config.dev
+com.acme.verein.dev
+com.acme.verein.entity
+com.acme.verein.graphql
+com.acme.verein.repository
+com.acme.verein.rest
+com.acme.verein.service

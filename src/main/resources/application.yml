@@ -23,7 +23,6 @@ server:
   error.whitelabel.enabled: false
   http2.enabled: true
   ssl:
-    client-auth: need
     enabled: true
     enabled-protocols: TLSv1.3
     key-alias: microservice

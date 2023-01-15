@@ -26,7 +26,6 @@ import java.util.Objects;
 import org.apache.catalina.util.ServerInfo;
 import org.springframework.boot.SpringBootVersion;
 import org.springframework.core.SpringVersion;
-import org.springframework.security.core.SpringSecurityCoreVersion;
 
 /**
  * Banner als String-Konstante für den Start des Servers.
@@ -63,7 +62,6 @@ final class Banner {
         (C) Juergen Zimmermann, Hochschule Karlsruhe
         Version             2.0
         Spring Boot         $springBoot
-        Spring Security     $springSecurity
         Spring Framework    $spring
         Tomcat              $tomcat
         Hibernate           $hibernate
@@ -82,7 +80,6 @@ final class Banner {
         """
         .replace("$figlet", getFiglet())
         .replace("$springBoot", SpringBootVersion.getVersion())
-        .replace("$springSecurity", SpringSecurityCoreVersion.getVersion())
         .replace("$spring", Objects.requireNonNull(SpringVersion.getVersion()))
         .replace("$tomcat", ServerInfo.getServerInfo())
         .replace("$hibernate", org.hibernate.Version.getVersionString())

@@ -17,7 +17,15 @@
 package com.acme.verein.entity;
 
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.persistence.Version;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -68,6 +76,9 @@ import static jakarta.persistence.FetchType.LAZY;
     "MissingSummary",
     "RedundantSuppression"})
 public class Verein {
+    /**
+     * Muster für einen gültigen Namen.
+     */
     public static final String NAME_PATTERN = "[A-ZÄÖÜ][a-zäöüß]+(-[A-ZÄÖÜ][a-zäöüß]+)?";
 
     /**
@@ -92,6 +103,12 @@ public class Verein {
     @EqualsAndHashCode.Include
     private UUID id;
 
+    /**
+     * Die Version des Vereins.
+     *
+     * @param version Die Version.
+     * @return Die version.
+     */
     @Version
     private int version;
 
@@ -150,9 +167,13 @@ public class Verein {
     @ToString.Exclude
     private Umsatz umsatz;
 
+    // https://docs.jboss.org/hibernate/orm/current/userguide/html_single/Hibernate_User_Guide.html...
+    // ...#mapping-generated-CreationTimestamp
     @CreationTimestamp
     private LocalDateTime erzeugt;
 
+    // https://docs.jboss.org/hibernate/orm/current/userguide/html_single/Hibernate_User_Guide.html...
+    // ...#mapping-generated-UpdateTimestamp
     @UpdateTimestamp
     private LocalDateTime aktualisiert;
 

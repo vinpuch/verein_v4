@@ -1,0 +1,74 @@
+' Copyright (C) 2019 - present Juergen Zimmermann, Hochschule Karlsruhe
+'
+' This program is free software: you can redistribute it and/or modify
+' it under the terms of the GNU General Public License as published by
+' the Free Software Foundation, either version 3 of the License, or
+' (at your option) any later version.
+'
+' This program is distributed in the hope that it will be useful,
+' but WITHOUT ANY WARRANTY; without even the implied warranty of
+' MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+' GNU General Public License for more details.
+'
+' You should have received a copy of the GNU General Public License
+' along with this program.  If not, see <https://www.gnu.org/licenses/>.
+@startuml VereinReadService
+
+skinparam classAttributeIconSize 0
+
+package java.util {
+    interface Collection<T>
+    interface Map<K,V>
+    class UUID
+}
+package org.springframework {
+    package stereotype {
+        interface Service
+    }
+     package transaction.annotation {
+            interface Transactional
+        }
+package com.acme.verein {
+    package entity {
+        class Verein << entity >>
+
+         Verein .up[hidden].> UUID
+         Verein .up[hidden].> Service
+         Verein .up[hidden].> Transactional
+    }
+
+    package repository {
+            interface VereinRepository << control >>
+        }
+
+    package service #DDDDDD {
+        class VereinReadService << control >> << @Service >> {
+            + findById(id: UUID): Verein
+            + find(suchkriterien: Map<String, List<String>>): Collection<Verein>
+            + findNamenByPrefix(prefix: String): Collection<String>
+            + findByFussballvereinId(fussballvereinId: UUID): Collection<Verein>
+            + findAll(): Collection<Verein>
+            + fetchFussballvereinById(fussballvereinId: UUID): Fussballverein
+            + fetchEmailById(fussballvereinId: UUID): String
+
+        }
+
+        VereinReadService o--> VereinRepository : repo
+        VereinReadService .up.> Verein
+        VereinReadService .up.> UUID
+        VereinReadService .up> Collection
+        VereinReadService .up.> Map
+        VereinReadService .up.> List
+        VereinReadService .up.> Service
+        VereinReadService ..> Transactional
+
+
+
+    }
+}
+
+hide empty members
+
+footer (c) Jürgen Zimmermann
+
+@enduml

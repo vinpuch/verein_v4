@@ -18,7 +18,6 @@ package com.acme.verein.service;
 
 import com.acme.verein.entity.Verein;
 import com.acme.verein.repository.VereinRepository;
-import com.acme.verein.repository.SpecBuilder;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +27,10 @@ import com.acme.verein.repository.Fussballverein;
 import com.acme.verein.repository.FussballvereinServiceException;
 import com.acme.verein.repository.FussballvereinRepository;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Anwendungslogik für Vereine.
@@ -46,7 +48,6 @@ import java.util.*;
 public class VereinReadService {
     private final VereinRepository repo;
     private final FussballvereinRepository fussballvereinRepo;
-    private final SpecBuilder specBuilder;
 
     /**
      * Einen Vereine anhand seiner ID suchen.
@@ -62,10 +63,10 @@ public class VereinReadService {
         // admin: Vereinndaten evtl. nicht gefunden
         final var verein = vereinOpt.orElseThrow(() -> new NotFoundException(id));
         log.debug("findById: {}", verein);
-        final var vereinsname = fetchFussballvereinById(verein.getFussballvereinId()).vereinsname();
-        verein.setFussballvereinVereinsname(vereinsname);
-        final var email = fetchEmailById(verein.getFussballvereinId());
-        verein.setFussballvereinEmail(email);
+        //final var vereinsname = fetchFussballvereinById(verein.getFussballvereinId()).vereinsname();
+        //verein.setFussballvereinVereinsname(vereinsname);
+        //final var email = fetchEmailById(verein.getFussballvereinId());
+       // verein.setFussballvereinEmail(email);
         return verein;
     }
 
@@ -107,10 +108,8 @@ public class VereinReadService {
             }
         }
 
-        final var spec = specBuilder
-            .build(suchkriterien)
-            .orElseThrow(() -> new NotFoundException(suchkriterien));
-        final var vereine = repo.findAll(spec);
+
+        final var vereine = repo.findAll();
         if (vereine.isEmpty()) {
             throw new NotFoundException(suchkriterien);
         }
@@ -173,7 +172,6 @@ public class VereinReadService {
     public Collection<Verein> findAll() {
         final var vereine = repo.findAll();
         vereine.forEach(verein -> {
-            // TODO Caching der bisher gefundenen Nachnamen
             final var fussballvereinId = verein.getFussballvereinId();
             final var fussballverein = fetchFussballvereinById(fussballvereinId);
             final var email = fetchEmailById(fussballvereinId);

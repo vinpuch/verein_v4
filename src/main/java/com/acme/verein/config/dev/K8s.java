@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnCloudPlatform;
 import org.springframework.context.annotation.Bean;
+
 import static org.springframework.boot.cloud.CloudPlatform.KUBERNETES;
 
 /**

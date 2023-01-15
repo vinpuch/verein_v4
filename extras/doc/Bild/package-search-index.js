@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"Alle Packages","u":"allpackages-index.html"},{"l":"com.acme.verein"},{"l":"com.acme.verein.config"},{"l":"com.acme.verein.config.dev"},{"l":"com.acme.verein.dev"},{"l":"com.acme.verein.entity"},{"l":"com.acme.verein.graphql"},{"l":"com.acme.verein.repository"},{"l":"com.acme.verein.rest"},{"l":"com.acme.verein.service"}];updateSearchResults();

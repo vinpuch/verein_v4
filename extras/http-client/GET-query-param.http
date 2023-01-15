@@ -2,16 +2,18 @@
 // https://www.jetbrains.com/help/idea/http-response-handling-examples.html#checking-response-headers-body
 
 ### Suche mit vorhandenem Namen
-GET {{baseUrl}}/?name=Alpha
+GET {{baseUrl}}/rest?name=Phi
 Accept: application/hal+json
-Authorization: Basic {{userAdmin}} {{password}}
 
 ### Suche mit nicht-vorhandenem Namen
-GET {{baseUrl}}?name=Nichtvorhanden
+GET {{baseUrl}}/rest?name=Nichtvorhanden
 Accept: application/hal+json
-Authorization: Basic {{userAdmin}} {{password}}
+
 
 ### Suche Namen mit Praefix
-GET {{baseUrl}}/name/A
+GET {{baseUrl}}/rest/name/A
 Accept: application/hal+json
-Authorization: Basic {{userAdmin}} {{password}}
+
+### Suche mit vorhandenem id
+GET {{baseUrl}}/rest/00000000-0000-0000-0000-000000000001
+Accept: application/hal+json

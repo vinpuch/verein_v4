@@ -18,16 +18,15 @@
 package com.acme.verein.config.dev;
 
 import org.springframework.context.annotation.Profile;
-import static com.acme.verein.config.dev.DevConfig.DEV;
 
 /**
- * Konfigurationsklasse für die Anwendung bzw. den Microservice, falls das Profile _dev_ aktiviert ist.
+ * Konfigurationsklasse für die Anwendung bzw. den Microservice, falls das Profile dev aktiviert ist.
  *
  * @author <a href="mailto:Juergen.Zimmermann@h-ka.de">Jürgen Zimmermann</a>
  */
-@Profile(DEV)
+@Profile(DevConfig.DEV)
 @SuppressWarnings({"ClassNamePrefixedWithPackageName", "HideUtilityClassConstructor"})
-public class DevConfig implements LogRequestHeaders, K8s {
+public class DevConfig implements Flyway, LogRequestHeaders, K8s {
     /**
      * Konstante für das Spring-Profile "dev".
      */

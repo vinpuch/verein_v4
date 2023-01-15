@@ -15,7 +15,7 @@
 
 -- (0) docker compose up
 -- (1) docker compose exec mysql bash
--- (2) mysql --user=root --password=p < /sql/create-db-fussballverein.sql
+-- (2) mysql --user=root --password=p < /sql/create-db-verein.sql
 -- (3) exit
 
 -- mysqlsh ist *NICHT* im Docker-Image enthalten: https://dev.mysql.com/doc/refman/8.0/en/mysql.html

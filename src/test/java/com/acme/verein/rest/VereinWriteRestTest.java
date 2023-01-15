@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Currency;
 import java.util.List;
 import java.util.UUID;
-
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
@@ -45,11 +44,11 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
-
-import static com.acme.verein.dev.DevConfig.DEV;
+import static com.acme.verein.config.dev.DevConfig.DEV;
 import static com.acme.verein.rest.VereinGetController.ID_PATTERN;
 import static com.acme.verein.rest.VereinGetController.REST_PATH;
-import static com.acme.verein.rest.VereinGetRestTest.*;
+import static com.acme.verein.rest.VereinGetRestTest.HOST;
+import static com.acme.verein.rest.VereinGetRestTest.SCHEMA;
 import static java.math.BigDecimal.ONE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.condition.JRE.JAVA_19;
@@ -62,7 +61,6 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.PRECONDITION_REQUIRED;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-
 @Tag("integration")
 @Tag("rest")
 @Tag("rest_write")
@@ -78,31 +76,22 @@ class VereinWriteRestTest {
     private static final String ID_UPDATE_PATCH = "00000000-0000-0000-0000-000000000040";
     private static final String ID_DELETE = "00000000-0000-0000-0000-000000000050";
     private static final String EMAIL_VORHANDEN = "alpha@acme.de";
-
     private static final String NEUER_NAME = "Neuername-Rest";
     private static final String NEUE_EMAIL = "email.rest@test.de";
     private static final String NEUES_GRUENDUNGSDATUM = "2022-01-31";
-    private static final String CURRENCY_CODE = "EUR";
     private static final String NEUE_HOMEPAGE = "https://test.de";
-
     private static final String NEUE_PLZ = "12345";
     private static final String NEUER_ORT = "Neuerortrest";
-
     private static final String NEUER_NAME_INVALID = "?!$";
     private static final String NEUE_EMAIL_INVALID = "email@";
     private static final int NEUE_KATEGORIE_INVALID = 11;
     private static final String NEUES_GRUENDUNGSDATUM_INVALID = "3000-01-31";
     private static final String NEUE_PLZ_INVALID = "1234";
     private static final String FUSSBALLVEREIN_ID = "00000000-0000-0000-0000-000000000001";
-
-
     private static final String ID_PATH = "/{id}";
-
     private final WebClient client;
-
     @InjectSoftAssertions
     private SoftAssertions softly;
-
     VereinWriteRestTest(@LocalServerPort final int port, final ApplicationContext ctx) {
         final var writeController = ctx.getBean(VereinWriteController.class);
         assertThat(writeController).isNotNull();
@@ -119,7 +108,6 @@ class VereinWriteRestTest {
             .baseUrl(baseUrl)
             .build();
     }
-
     @SuppressWarnings("DataFlowIssue")
     @Nested
     @DisplayName("REST-Schnittstelle fuer POST")
@@ -141,12 +129,8 @@ class VereinWriteRestTest {
                 args.get(3, URL.class),
                 umsatz,
                 adresse,
-                UUID.fromString(args.get(6).toString())
-
-
+                UUID.fromString(args.getString(6))
             );
-
-
             // when
             final var response = client
                 .post()
@@ -154,8 +138,6 @@ class VereinWriteRestTest {
                 .bodyValue(vereinDTO)
                 .exchangeToMono(Mono::just)
                 .block();
-
-
             // then
             softly.assertThat(response)
                 .isNotNull()
@@ -167,7 +149,6 @@ class VereinWriteRestTest {
                 .isInstanceOf(URI.class);
             softly.assertThat(location.toString()).matches(".*/" + ID_PATTERN + "$");
         }
-
         @ParameterizedTest(name = "[{index}] Neuanlegen mit ungueltigen Werten: name={0}, email={1}")
         @CsvSource(
             NEUER_NAME_INVALID + "," + NEUE_EMAIL_INVALID + "," + NEUE_KATEGORIE_INVALID + "," +
@@ -185,17 +166,14 @@ class VereinWriteRestTest {
                 null,
                 null,
                 adresse,
-                UUID.fromString(args.get(6).toString())
+                UUID.fromString(args.getString(6))
             );
-            final var violationKeys = List.of(
-                "name",
+            final var violationKeys = List.of("name",
                 "email",
                 "kategorie",
                 "gruendungsdatum",
                 "adresse.plz",
-                "interessen"
-            );
-
+                "interessen");
             // when
             final var body = client
                 .post()
@@ -208,7 +186,6 @@ class VereinWriteRestTest {
                     return response.bodyToMono(ProblemDetail.class);
                 })
                 .block();
-
             // then
             assertThat(body).isNotNull();
             final var detail = body.getDetail();
@@ -225,8 +202,6 @@ class VereinWriteRestTest {
                 .hasSameSizeAs(violationKeys)
                 .hasSameElementsAs(violationKeys);
         }
-
-
         @Nested
         @DisplayName("REST-Schnittstelle fuer Aendern")
         class Aendern {
@@ -261,7 +236,6 @@ class VereinWriteRestTest {
                         vereinOrig.adresse(),
                         null
                     );
-
                     // when
                     final var statusCode = client
                         .put()
@@ -271,11 +245,9 @@ class VereinWriteRestTest {
                         .bodyValue(verein)
                         .exchangeToMono(response -> Mono.just(response.statusCode()))
                         .block();
-
                     // then
                     assertThat(statusCode).isEqualTo(NO_CONTENT);
                 }
-
                 @ParameterizedTest(name = "[{index}] Aendern durch Put und Email existiert: id={0}, email={1}")
                 @CsvSource({ID_UPDATE_PUT + ',' + EMAIL_VORHANDEN, ID_UPDATE_PATCH + ',' + EMAIL_VORHANDEN})
                 @DisplayName("Aendern durch Put und Email existiert")
@@ -304,7 +276,6 @@ class VereinWriteRestTest {
                         vereinOrig.adresse(),
                         null
                     );
-
                     // when
                     final var body = client
                         .put()
@@ -326,7 +297,6 @@ class VereinWriteRestTest {
                         .isNotNull()
                         .contains(email);
                 }
-
                 @ParameterizedTest(name = "[{index}] Aendern durch Put mit ungueltigen Werten: id={0}, name={1}")
                 @CsvSource(
                     ID_UPDATE_PUT + ',' + NEUER_NAME_INVALID + ',' + NEUE_EMAIL_INVALID + ',' + NEUE_KATEGORIE_INVALID
@@ -358,7 +328,6 @@ class VereinWriteRestTest {
                         null
                     );
                     final var violationKeys = List.of("name", "email", "kategorie");
-
                     // when
                     final var body = client
                         .put()
@@ -373,14 +342,14 @@ class VereinWriteRestTest {
                             return response.bodyToMono(ProblemDetail.class);
                         })
                         .block();
-
                     // then
                     assertThat(body).isNotNull();
                     final var detail = body.getDetail();
                     assertThat(detail)
                         .isNotNull()
                         .isNotEmpty();
-                    @SuppressWarnings("DynamicRegexReplaceableByCompiledPattern") final var violations = detail.split(", ");
+                    @SuppressWarnings("DynamicRegexReplaceableByCompiledPattern")
+                    final var violations = detail.split(", ");
                     assertThat(violations)
                         .isNotNull()
                         .hasSize(violationKeys.size());
@@ -389,7 +358,6 @@ class VereinWriteRestTest {
                         .toList();
                     assertThat(actualViolationKeys).containsExactlyInAnyOrderElementsOf(violationKeys);
                 }
-
                 @ParameterizedTest(name = "[{index}] Aendern durch Put ohne Version: id={0}")
                 @ValueSource(strings = {ID_VORHANDEN, ID_UPDATE_PUT, ID_UPDATE_PATCH})
                 @DisplayName("Aendern durch Put ohne Version")
@@ -414,7 +382,6 @@ class VereinWriteRestTest {
                         vereinOrig.adresse(),
                         null
                     );
-
                     // when
                     final var body = client
                         .put()
@@ -428,7 +395,6 @@ class VereinWriteRestTest {
                             return response.bodyToMono(ProblemDetail.class);
                         })
                         .block();
-
                     // then
                     assertThat(body)
                         .isNotNull()
@@ -438,7 +404,6 @@ class VereinWriteRestTest {
                 }
             }
         }
-
         @Nested
         @DisplayName("REST-Schnittstelle fuer DELETE")
         class Loeschen {
@@ -452,7 +417,6 @@ class VereinWriteRestTest {
                     .uri(ID_PATH, id)
                     .exchangeToMono(response -> Mono.just(response.statusCode()))
                     .block();
-
                 // then
                 assertThat(statusCode).isEqualTo(NO_CONTENT);
             }

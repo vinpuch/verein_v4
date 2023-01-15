@@ -57,6 +57,7 @@ final class ExceptionHandler extends DataFetcherExceptionResolverAdapter {
         return super.resolveToSingleError(ex, env);
     }
 
+
     /**
      * Abbildung der Exceptions aus VereinGraphQlController auf GraphQLError.
      *

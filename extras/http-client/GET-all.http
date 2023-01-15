@@ -4,4 +4,3 @@
 ### Suche alle vereine (<Strg><Click> fuer Web Browser)
 GET {{baseUrl}}
 Accept: application/hal+json
-Authorization: Basic {{userAdmin}} {{password}}

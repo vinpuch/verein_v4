@@ -21,6 +21,7 @@ import com.acme.verein.config.dev.DevConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import static com.acme.verein.config.Banner.TEXT;
 import static org.springframework.hateoas.config.EnableHypermediaSupport.HypermediaType.HAL;
@@ -34,8 +35,7 @@ import static org.springframework.hateoas.support.WebStack.WEBMVC;
 @SpringBootApplication(proxyBeanMethods = false)
 @Import({AppConfig.class, DevConfig.class})
 @EnableHypermediaSupport(type = HAL, stacks = WEBMVC)
-//@EnableWebSecurity
-//@EnableMethodSecurity
+@EnableJpaRepositories(basePackages = "com.acme.verein.repository")
 @SuppressWarnings({"ImplicitSubclassInspection", "ClassUnconnectedToPackage"})
 public final class Application {
     private Application() {
