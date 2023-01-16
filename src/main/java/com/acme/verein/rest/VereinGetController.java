@@ -194,4 +194,5 @@ public class VereinGetController {
         log.debug("findNamenByPrefix: {}", namen);
         return namen.toString();
     }
+
 }
